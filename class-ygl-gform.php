@@ -98,8 +98,18 @@ class YGL_Gform extends GFAddOn {
 			
 			$json_settings = json_encode($settings);
 			
-			$lead_source_name = $plugin_settings['lead_source_name'];
-			$lead_source_id = $plugin_settings['lead_source_id'];
+			if ( isset($settings['over_lead_source_name']) && !empty($settings['over_lead_source_name']) ) {
+				$lead_source_name = $settings['over_lead_source_name'];
+			} else {
+				$lead_source_name = $plugin_settings['lead_source_name'];
+			}
+			
+			if ( isset($settings['over_lead_source_id']) && !empty($settings['over_lead_source_id']) ) {
+				$lead_source_id = $settings['over_lead_source_id'];
+			} else {
+				$lead_source_id = $plugin_settings['lead_source_id'];
+			}
+
 			$lead_source_rank = $plugin_settings['lead_source_rank'];
 			
 			$referral_sources = array(
@@ -135,7 +145,10 @@ class YGL_Gform extends GFAddOn {
 			$auth_key = $username . ':' . $password;
 			$encode_key = base64_encode($auth_key);
 			
-			if(isset($settings['community_id']) && !empty($settings['community_id'])) {
+			if ( isset($settings['ygl_fields_over_community']) && !empty($settings['ygl_fields_over_community']) ) {
+				$map_community = $settings['ygl_fields_over_community'];
+				$community = $entry[$map_community];
+			}else if(isset($settings['community_id']) && !empty($settings['community_id'])) {
 				$community = $settings['community_id'];
 			} else {
 				$message = 'YGL Gform has a form set to send, but no Community ID is atached to the form. Form ID: ' . $active_form . ' Please set the Community ID in the form\'s setting page.';
@@ -149,9 +162,11 @@ class YGL_Gform extends GFAddOn {
 			$base_url = $plugin_settings['target_url'];
 			$post_url = rtrim($base_url, '/') . '/' . $community . '/leads';
 			
+			write_log($post_url);
+			
 			$send_w_curl = false;
 			
-			if ($settings['use_curl']) {
+			if ( isset($settings['ygl_fields_phone']) && $settings['use_curl'] ) {
 				$send_w_curl = true;
 			}
 			
@@ -323,6 +338,7 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<p>Individual form settings can be found under admin -> Forms -> Forms -> {form name} -> Settings -> YGL GForm.</p>';
 		$instructions .= '<p>Select the "Send this form to You\'ve Got Leads" checkbox to attach the form. You will need to set the Community ID, as the default value is only a placeholder and will not work.</p>';
 		$instructions .= '<p>By default this plugin uses Remote Post (wp_remote_post) to send form data. This can be changed to to use cURL. If you have cURL installed and wish to use this method, select this checkbox.</p>';
+		$instructions .= '<p>You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin\'s configuration screen. These values are related and set by YGL, so take care when setting these values.</p>';
 		$instructions .= '<h3>Field Mapping</h3>';
 		$instructions .= '<p>To map the form fields, select the relevant Field (to be mapped for YGL) to the Form Field (from the Gravity Form).</p>';
 		$instructions .= '<p>The form field must be of the correct type. The mapping is as follows:</p>';
@@ -331,8 +347,10 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<li>Last Name -> textfield</li>';
 		$instructions .= '<li>Email Address -> email</li>';
 		$instructions .= '<li>Phone -> phone</li>';
+		$instructions .= '<li>Community -> select</li>';
 		$instructions .= '</ul>';
 		$instructions .= '<p>So make sure when creating your form that you use the correct form field types for the YGL field mapping.</p>';
+		$instructions .= '<p>If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form\'s settings.</p>';
 		
 		echo $instructions;	
     }
@@ -497,7 +515,21 @@ class YGL_Gform extends GFAddOn {
 						'tooltip' => esc_html__('The You\'ve Got Leads Community ID.', 'ygl_gform'),
 						'required' => true,
 						'default_value' => 'xxxxxxx',
-					),					
+					),
+					array(
+						'label' => esc_html__('Lead Source Name', 'ygl_gform'),
+						'type' => 'text',
+						'name' => 'over_lead_source_name',
+						'tooltip' => esc_html__('Overwrites global Lead Source Name', 'ygl_gform'),
+						'required' => false,
+					),
+					array(
+						'label' => esc_html__('Lead Source ID', 'ygl_gform'),
+						'type' => 'text',
+						'name' => 'over_lead_source_id',
+						'tooltip' => esc_html__('Overwrites global Lead Source ID', 'ygl_gform'),
+						'required' => false,
+					),
 				),			
 				
 			),
@@ -528,7 +560,7 @@ class YGL_Gform extends GFAddOn {
 				'label'         => esc_html__( 'First Name', 'ygl_gform' ),
 				'required'      => false,
 				'field_type'    => array( 'name', 'text', 'hidden' ),
-				'tooltip' => esc_html__('Must be a text field type', 'ygl_gform'),
+				'tooltip' => esc_html__('Must be a text field type.', 'ygl_gform'),
 				'default_value' => $this->get_first_field_by_type( 'name', 3 ),
 			),
 			array(
@@ -536,7 +568,7 @@ class YGL_Gform extends GFAddOn {
 				'label'         => esc_html__( 'Last Name', 'ygl_gform' ),
 				'required'      => false,
 				'field_type'    => array( 'name', 'text', 'hidden' ),
-				'tooltip' => esc_html__('Must be a text field type', 'ygl_gform'),
+				'tooltip' => esc_html__('Must be a text field type.', 'ygl_gform'),
 				'default_value' => $this->get_first_field_by_type( 'name', 6 ),
 			),
 			array(
@@ -544,7 +576,7 @@ class YGL_Gform extends GFAddOn {
 				'label'         => esc_html__( 'Email Address', 'ygl_gform' ),
 				'required'      => true,
 				'field_type'    => array( 'email', 'hidden' ),
-				'tooltip' => esc_html__('Must be an email field type', 'ygl_gform'),
+				'tooltip' => esc_html__('Must be an email field type.', 'ygl_gform'),
 				'default_value' => $this->get_first_field_by_type( 'email' ),
 			),
 			array(
@@ -552,8 +584,15 @@ class YGL_Gform extends GFAddOn {
 				'label' => esc_html__('Phone', 'ygl_gform'),
 				'required' => false,
 				'field_type' => array('name', 'phone', 'hidden'),
-				'tooltip' => esc_html__('Must be a text phone type', 'ygl_gform'),
+				'tooltip' => esc_html__('Must be a text phone type.', 'ygl_gform'),
 				'default_value' => $this->get_first_field_by_type( 'phone' ),
+			),
+			array(
+				'name' => 'over_community',
+				'label' => esc_html__('Community ID', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('select'),
+				'tooltip' => esc_html__('Overwrites form\'s Community ID. Must be a select field type.', 'ygl_gform'),
 			),
 		);
 	}
