@@ -1,0 +1,24 @@
+/* placeholder for css */
+
+.gaddon-text {
+	min-width: 50%;
+}
+
+.base-url {
+	width: 600px;
+}
+
+.foo {
+	background-color: black;
+	color: white;
+	padding: 3px;
+}
+
+ul.instruction {
+	list-style: disc;
+	margin-left: 30px;
+}
+
+ul.instruction li {
+	margin-bottom: 0;
+}

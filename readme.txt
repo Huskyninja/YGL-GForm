@@ -1,7 +1,7 @@
 === Plugin Name ===
 Plugin Name: You've Got Leads Gravity Forms
 Description: Send form data to the You've Got Leads CRM using Gravity Form's Add-on Framework
-version: 0.10
+version: 0.10.1
 Author: Husky Ninja
 Author URI: https://www.husky.ninja
 License: GPLv3 or later
@@ -32,7 +32,7 @@ Select the "Send this form to You've Got Leads" checkbox to attach the form. You
 
 By default this plugin uses Remote Post (wp_remote_post) to send form data. This can be changed to to use cURL. If you have cURL installed and wish to use this method, select this checkbox.
 
-You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin's configuration screen. These values are related and set by YGL, so take care when setting these values.
+You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin's configuration screen. These values are related and set by YGL, so take care when setting these values, and ensure that your YGL account has permissions to access these values remotly.
 
 Field Mapping
 
@@ -51,6 +51,10 @@ So make sure when creating your form that you use the correct form field types f
 If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form's settings.
 
 == Changelog ==
+
+= 0.10.1 =
+* updated instruction & help documentation
+* finally fixed scripts and styles references
 
 = 0.10 =
 * added a form level customization for LeadSourceName and LeadSourceID

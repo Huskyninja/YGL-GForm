@@ -263,19 +263,14 @@ class YGL_Gform extends GFAddOn {
     public function scripts() {
         $scripts = array(
             array(
-                'handle'  => 'my_script_js',
-                'src'     => $this->get_base_url() . '/js/my_script.js',
+                'handle'  => 'ygl_gform_js',
+                'src'     => $this->get_base_url() . '/js/ygl_gform_script.js',
                 'version' => $this->_version,
                 'deps'    => array( 'jquery' ),
-                'strings' => array(
-                    'first'  => esc_html__( 'First Choice', 'ygl_gform' ),
-                    'second' => esc_html__( 'Second Choice', 'ygl_gform' ),
-                    'third'  => esc_html__( 'Third Choice', 'ygl_gform' )
-                ),
+                'strings' => array(),
                 'enqueue' => array(
                     array(
-                        'admin_page' => array( 'form_settings' ),
-                        'tab'        => 'ygl_gform'
+                        'admin_page' => array( 'plugin_page' )
                     )
                 )
             ),
@@ -293,11 +288,13 @@ class YGL_Gform extends GFAddOn {
     public function styles() {
         $styles = array(
             array(
-                'handle'  => 'my_styles_css',
-                'src'     => $this->get_base_url() . '/css/my_styles.css',
+                'handle'  => 'ygl_gform_css',
+                'src'     => $this->get_base_url() . '/css/ygl_gform_style.css',
                 'version' => $this->_version,
                 'enqueue' => array(
-                    array( 'field_types' => array( 'poll' ) )
+                    array(
+						'admin_page' => array( 'form_settings', 'plugin_settings', 'plugin_page' )
+					)
                 )
             )
         );
@@ -338,11 +335,11 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<p>Individual form settings can be found under admin -> Forms -> Forms -> {form name} -> Settings -> YGL GForm.</p>';
 		$instructions .= '<p>Select the "Send this form to You\'ve Got Leads" checkbox to attach the form. You will need to set the Community ID, as the default value is only a placeholder and will not work.</p>';
 		$instructions .= '<p>By default this plugin uses Remote Post (wp_remote_post) to send form data. This can be changed to to use cURL. If you have cURL installed and wish to use this method, select this checkbox.</p>';
-		$instructions .= '<p>You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin\'s configuration screen. These values are related and set by YGL, so take care when setting these values.</p>';
+		$instructions .= '<p>You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin\'s configuration screen. These values are related and set by YGL, so take care when setting these values, and ensure that your YGL account has permissions to access these values remotly.</p>';
 		$instructions .= '<h3>Field Mapping</h3>';
 		$instructions .= '<p>To map the form fields, select the relevant Field (to be mapped for YGL) to the Form Field (from the Gravity Form).</p>';
 		$instructions .= '<p>The form field must be of the correct type. The mapping is as follows:</p>';
-		$instructions .= '<ul>';
+		$instructions .= '<ul class="instruction">';
 		$instructions .= '<li>First Name -> textfield</li>';
 		$instructions .= '<li>Last Name -> textfield</li>';
 		$instructions .= '<li>Email Address -> email</li>';
