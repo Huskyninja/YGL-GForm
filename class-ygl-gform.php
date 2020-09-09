@@ -109,8 +109,12 @@ class YGL_Gform extends GFAddOn {
 			} else {
 				$lead_source_id = $plugin_settings['lead_source_id'];
 			}
-
-			$lead_source_rank = $plugin_settings['lead_source_rank'];
+			
+			if ( isset($settings['over_lead_source_rank']) && trim($settings['over_lead_source_rank']) != "" ) {
+				$lead_source_rank = $settings['over_lead_source_rank'];
+			} else {
+				$lead_source_rank = $plugin_settings['lead_source_rank'];
+			}
 			
 			$referral_sources = array(
 				'LeadSourceName' => $lead_source_name,
@@ -162,7 +166,7 @@ class YGL_Gform extends GFAddOn {
 			$base_url = $plugin_settings['target_url'];
 			$post_url = rtrim($base_url, '/') . '/' . $community . '/leads';
 			
-			write_log($post_url);
+			// write_log($post_url);
 			
 			$send_w_curl = false;
 			
@@ -335,15 +339,15 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<p>Individual form settings can be found under admin -> Forms -> Forms -> {form name} -> Settings -> YGL GForm.</p>';
 		$instructions .= '<p>Select the "Send this form to You\'ve Got Leads" checkbox to attach the form. You will need to set the Community ID, as the default value is only a placeholder and will not work.</p>';
 		$instructions .= '<p>By default this plugin uses Remote Post (wp_remote_post) to send form data. This can be changed to to use cURL. If you have cURL installed and wish to use this method, select this checkbox.</p>';
-		$instructions .= '<p>You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin\'s configuration screen. These values are related and set by YGL, so take care when setting these values, and ensure that your YGL account has permissions to access these values remotly.</p>';
+		$instructions .= '<p>You can set a custom value for the Lead Source Name, Lead Source ID and LeadSourceRank. This value will overwrite the global Lead Source Name, Lead Source ID or Lead Source Rank set on the plugin\'s configuration screen. Take care when setting these values as any mismatches will cause the request to fail. Also, it is important to ensure that your YGL account has permissions to access these values remotely.</p>';
 		$instructions .= '<h3>Field Mapping</h3>';
 		$instructions .= '<p>To map the form fields, select the relevant Field (to be mapped for YGL) to the Form Field (from the Gravity Form).</p>';
 		$instructions .= '<p>The form field must be of the correct type. The mapping is as follows:</p>';
 		$instructions .= '<ul class="instruction">';
-		$instructions .= '<li>First Name -> textfield</li>';
-		$instructions .= '<li>Last Name -> textfield</li>';
-		$instructions .= '<li>Email Address -> email</li>';
-		$instructions .= '<li>Phone -> phone</li>';
+		$instructions .= '<li>First Name -> name, text or hidden</li>';
+		$instructions .= '<li>Last Name -> name, text or hidden</li>';
+		$instructions .= '<li>Email Address -> email or hidden</li>';
+		$instructions .= '<li>Phone -> phone or hidden</li>';
 		$instructions .= '<li>Community -> select</li>';
 		$instructions .= '</ul>';
 		$instructions .= '<p>So make sure when creating your form that you use the correct form field types for the YGL field mapping.</p>';
@@ -527,6 +531,13 @@ class YGL_Gform extends GFAddOn {
 						'tooltip' => esc_html__('Overwrites global Lead Source ID', 'ygl_gform'),
 						'required' => false,
 					),
+					array(
+						'label' => esc_html__('Lead Source Rank', 'ygl_gform'),
+						'type' => 'text',
+						'name' => 'over_lead_source_rank',
+						'tooltip' => esc_html__('Overwrites global Lead Source Rank', 'ygl_gform'),
+						'required' => false,
+					)
 				),			
 				
 			),

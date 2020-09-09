@@ -1,7 +1,7 @@
 === Plugin Name ===
 Plugin Name: You've Got Leads Gravity Forms
 Description: Send form data to the You've Got Leads CRM using Gravity Form's Add-on Framework
-version: 0.10.1
+version: 0.11
 Author: Husky Ninja
 Author URI: https://www.husky.ninja
 License: GPLv3 or later
@@ -32,7 +32,7 @@ Select the "Send this form to You've Got Leads" checkbox to attach the form. You
 
 By default this plugin uses Remote Post (wp_remote_post) to send form data. This can be changed to to use cURL. If you have cURL installed and wish to use this method, select this checkbox.
 
-You can set a custom value for the Lead Source Name and Lead Source ID. This value will overwrite the global Lead Source Name and Lead Source ID set on the plugin's configuration screen. These values are related and set by YGL, so take care when setting these values, and ensure that your YGL account has permissions to access these values remotly.
+You can set a custom value for the Lead Source Name, Lead Source ID and LeadSourceRank. This value will overwrite the global Lead Source Name, Lead Source ID or Lead Source Rank set on the plugin's configuration screen. Take care when setting these values as any mismatches will cause the request to fail. Also, it is important to ensure that your YGL account has permissions to access these values remotely.
 
 Field Mapping
 
@@ -40,10 +40,10 @@ To map the form fields, select the relevant Field (to be mapped for YGL) to the 
 
 The form field must be of the correct type. The mapping is as follows:
 
-First Name -> textfield
-Last Name -> textfield
-Email Address -> email
-Phone -> phone
+First Name -> name, text or hidden
+Last Name -> name, text or hidden
+Email Address -> email or hidden
+Phone -> phone or hidden
 Community -> select
 
 So make sure when creating your form that you use the correct form field types for the YGL field mapping.
@@ -51,6 +51,10 @@ So make sure when creating your form that you use the correct form field types f
 If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form's settings.
 
 == Changelog ==
+
+= 0.11 =
+* added LeadSourceRank to form level customization
+* keep improving help docs
 
 = 0.10.1 =
 * updated instruction & help documentation
