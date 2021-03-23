@@ -133,6 +133,36 @@ class YGL_Gform extends GFAddOn {
 				$map_last_name = $settings['ygl_fields_last_name'];
 				$quick_query['PrimaryContact']['LastName'] = $entry[$map_last_name];
 			}
+
+			if ( isset($settings['ygl_fields_address1']) && !empty($settings['ygl_fields_address1']) ) {
+				$map_address_one = $settings['ygl_fields_address1'];
+				$quick_query['PrimaryContact']['Address']['Address1'] = $entry[$map_address_one];
+			}
+			
+			if ( isset($settings['ygl_fields_address2']) && !empty(trim($settings['ygl_fields_address2'])) ) {
+				$map_address_two = $settings['ygl_fields_address2'];
+				$quick_query['PrimaryContact']['Address']['Address2'] = $entry[$map_address_two];
+			}
+			
+			if ( isset($settings['ygl_fields_city']) && !empty($settings['ygl_fields_city']) ) {
+				$map_city = $settings['ygl_fields_city'];
+				$quick_query['PrimaryContact']['Address']['City'] = $entry[$map_city];
+			}
+			
+			if ( isset($settings['ygl_fields_state']) && !empty($settings['ygl_fields_state']) ) {
+				$map_state = $settings['ygl_fields_state'];
+				$quick_query['PrimaryContact']['Address']['State'] = $entry[$map_state];
+			}
+			
+			if ( isset($settings['ygl_fields_zip']) && !empty($settings['ygl_fields_zip']) ) {
+				$map_zip = $settings['ygl_fields_zip'];
+				$quick_query['PrimaryContact']['Address']['Zip'] = $entry[$map_zip];
+			}
+			
+			if ( isset($settings['ygl_fields_country']) && !empty($settings['ygl_fields_country'])) {
+				$map_country = $settings['ygl_fields_country'];
+				$quick_query['PrimaryContact']['Address']['Country'] = $entry[$map_country];
+			}
 			
 			if ( isset($settings['ygl_fields_email_address']) && !empty($settings['ygl_fields_email_address']) ) {
 				$map_email = $settings['ygl_fields_email_address'];
@@ -346,11 +376,18 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<ul class="instruction">';
 		$instructions .= '<li>First Name -> name, text or hidden</li>';
 		$instructions .= '<li>Last Name -> name, text or hidden</li>';
+		$instructions .= '<li>Street Address -> address, text or hidden</li>';
+		$instructions .= '<li>Address Line 2 -> address, text or hidden</li>';
+		$instructions .= '<li>City -> address, text or hidden</li>';
+		$instructions .= '<li>State -> address, text or hidden</li>';
+		$instructions .= '<li>Zip -> address, text or hidden</li>';
+		$instructions .= '<li>Country -> address, text or hidden</li>';
 		$instructions .= '<li>Email Address -> email or hidden</li>';
 		$instructions .= '<li>Phone -> phone or hidden</li>';
 		$instructions .= '<li>Community -> select</li>';
 		$instructions .= '</ul>';
 		$instructions .= '<p>So make sure when creating your form that you use the correct form field types for the YGL field mapping.</p>';
+		$instructions .= '<p><strong>Important:</strong> When using the Gravity Forms Address field, be sure to map the correct matching address sub-field. For example, Address Line 2 should be mapped to Address Line 2.</p>';
 		$instructions .= '<p>If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form\'s settings.</p>';
 		
 		echo $instructions;	
@@ -578,6 +615,48 @@ class YGL_Gform extends GFAddOn {
 				'field_type'    => array( 'name', 'text', 'hidden' ),
 				'tooltip' => esc_html__('Must be a text field type.', 'ygl_gform'),
 				'default_value' => $this->get_first_field_by_type( 'name', 6 ),
+			),
+			array(
+				'name' => 'address1',
+				'label' => esc_html__('Street Address', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'address2',
+				'label' => esc_html__('Address Line 2', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'city',
+				'label' => esc_html__('City', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'state',
+				'label' => esc_html__('State', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'zip',
+				'label' => esc_html__('Zip / Postal Code', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'country',
+				'label' => esc_html__('Country', 'ygl_gform'),
+				'required' => false,
+				'field_type' => array('address', 'text', 'hidden'),
+				'tooltip' => esc_html__('When using the Gravity Forms Address field, be sure to map the correct address sub-field.', 'ygl_gform'),
 			),
 			array(
 				'name'          => 'email_address',

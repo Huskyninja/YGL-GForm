@@ -1,7 +1,7 @@
 === Plugin Name ===
 Plugin Name: You've Got Leads Gravity Forms
 Description: Send form data to the You've Got Leads CRM using Gravity Form's Add-on Framework
-version: 0.11
+version: 0.12
 Author: Husky Ninja
 Author URI: https://www.husky.ninja
 License: GPLv3 or later
@@ -44,13 +44,24 @@ First Name -> name, text or hidden
 Last Name -> name, text or hidden
 Email Address -> email or hidden
 Phone -> phone or hidden
+Street Address -> address, text or hidden
+Address Line 2 -> address, text or hidden
+City -> address, text or hidden
+State -> address, text or hidden
+Zip -> address, text or hidden
+Country -> address, text or hidden
 Community -> select
 
 So make sure when creating your form that you use the correct form field types for the YGL field mapping.
 
+Important: When using the Gravity Forms Address field, be sure to map the correct matching address sub-field. For example, Address Line 2 should be mapped to Address Line 2.
+
 If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form's settings.
 
 == Changelog ==
+
+= 0.12 =
+* added support for street address, including most sub-fields the GForm address field type
 
 = 0.11 =
 * added LeadSourceRank to form level customization
