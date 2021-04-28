@@ -1,5 +1,13 @@
 /* placeholder for css */
 
+.wrap h2 {
+	font-size: 1.4em;
+}
+
+.wrap h3 {
+	font-size: 1.15em;
+}
+
 .gaddon-text {
 	min-width: 50%;
 }
@@ -22,3 +30,4 @@ ul.instruction {
 ul.instruction li {
 	margin-bottom: 0;
 }
+

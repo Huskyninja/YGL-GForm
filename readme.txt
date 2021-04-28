@@ -1,7 +1,7 @@
 === Plugin Name ===
 Plugin Name: You've Got Leads Gravity Forms
 Description: Send form data to the You've Got Leads CRM using Gravity Form's Add-on Framework
-version: 0.12
+version: 0.13
 Author: Husky Ninja
 Author URI: https://www.husky.ninja
 License: GPLv3 or later
@@ -23,6 +23,14 @@ You may need to enter a LeadSourceName, LeadSourceID, and LeadSourceRank. Leave 
 Sending a Debug Email
 
 You can send a debug email for all submissions that contain logging information which can be useful if you do not have logging enabled. Select "Send a debug email" to enable this feature, and enter a valid email under "Debug email address". This will send an email containing logging information for all forms submitted to You've Got Leads.
+
+Global Submission Bypass
+
+The Global Submission Bypass is designed to allow your forms to bypass submission to YGL when a form condition is met. If a user selects a value from the field that has been mapped to Form Bypass Keyword (which is limited to the select field type) and that selection's value matches the Global Bypass Keyword, then the form will not be submitted to YGL. The form will still submit to the site, and any Wordpress / Gravity Form processes will continue as normal.
+
+This feature can be useful if you have a condition that a user must meet in order to be submitted to YGL (leads v. employment seekers for example). It is important that the value of the option within the select field (in the Field Properties, select the "Show Values" checkbox) be set to match the Global Bypass Keyword exactly. Please note, the input is "trimmed" before the comparison is run to ensure any leading or trailing spaces are ignored.
+
+If the checkbox Use Global Submission Bypass is unchecked, no interruption of YGL submission will take place, and any fields mapped to Form Bypass Keyword will do nothing. Fields mapped to Form Bypass Keyword do not send information to YGL on their own. Form fields may be mapped multiple times, so the Form Bypass Keyword should not interfere with YGL submissions unless specifically directed.
 
 Form Settings
 
@@ -51,6 +59,7 @@ State -> address, text or hidden
 Zip -> address, text or hidden
 Country -> address, text or hidden
 Community -> select
+Form Bypass Keyword -> select
 
 So make sure when creating your form that you use the correct form field types for the YGL field mapping.
 
@@ -58,10 +67,16 @@ Important: When using the Gravity Forms Address field, be sure to map the correc
 
 If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form's settings.
 
+Form Bypass Keyword is used with the Global Submission Bypass value. Be sure that the value of this field matches the Global Bypass Keyword. See the Global Bypass Submission section (above) for more information.
+
 == Changelog ==
 
+= 0.13 =
+* added method to conditionally bypass submission to YGL through user dropdown selection & field mapping (Global Submission Bypass)
+* updated css for headlines on admin / instructions page
+
 = 0.12 =
-* added support for street address, including most sub-fields the GForm address field type
+* added support for street address, including most sub-fields from the GForm address field type
 
 = 0.11 =
 * added LeadSourceRank to form level customization

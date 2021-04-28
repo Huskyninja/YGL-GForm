@@ -95,7 +95,49 @@ class YGL_Gform extends GFAddOn {
 			}
 			
 			// write_log('YGL sending form ' . $active_form);
-			
+
+			// check the global bypass and if the form's bypass mapping have been set
+			$bypass_form_checked = '';
+			if ( isset($plugin_settings['use_submission_bypass']) ) {
+				$bypass_form_checked = $plugin_settings['use_submission_bypass'];
+			}
+			if ($bypass_form_checked == '1') {
+
+				$bypass_message = 'The Global Submission Bypass feature is enabled. ';
+
+				// check to see if the global bypass keyword has been set
+				if ( isset($plugin_settings['global_bypass_keyword']) && !empty($plugin_settings['global_bypass_keyword']) ) {
+					$global_bypass_keyword = trim($plugin_settings['global_bypass_keyword']);
+					$bypass_message .= 'The Global Bypass Keyword is ' . $global_bypass_keyword . '. ';						
+				} else {
+					$message = 'The Use Global Submission Bypass is checked, but no Global Bypass Keyword is set. Form submission to YGL will not be intercepted.';
+					write_log($message);
+					if ($send_mail) {
+						wp_mail($target_email, $email_subject, $message);
+					}
+				}
+
+				// check to see if the form's mapped bypass keyword has been set
+				if ( isset($settings['ygl_fields_bypass_field']) && !empty($settings['ygl_fields_bypass_field']) ) {
+					$form_bypass_field = $settings['ygl_fields_bypass_field'];
+					$form_bypass_keyword = trim($entry[$form_bypass_field]);
+					$bypass_message .= 'The Form Bypass Keyword field has been mapped successfully. The value selected is ' . $form_bypass_keyword . '. ';
+				}
+
+				// if both the global bypass keyword and the form mapped field bypass keyword have been set and they match then log the event and skip submission
+				if ( isset($global_bypass_keyword) && isset($form_bypass_keyword) ) {
+					if ( $global_bypass_keyword === $form_bypass_keyword ) {
+						$bypass_message .=  'The Global Bypass Keyword and Form Bypass Keyword values match. This form will not be submitted to YGL. No other form operations have been interrupted. The form\'s ID is ' . $active_form . '.';
+						write_log($bypass_message);
+						if ($send_mail) {
+							wp_mail($target_email, $email_subject, $bypass_message);
+						}
+						return;
+					}
+				}
+
+			}
+
 			$json_settings = json_encode($settings);
 			
 			if ( isset($settings['over_lead_source_name']) && !empty($settings['over_lead_source_name']) ) {
@@ -365,6 +407,10 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<p>You may need to enter a LeadSourceName, LeadSourceID, and LeadSourceRank. Leave the default values if you have not received any information from YGL.</p>';
 		$instructions .= '<h3>Sending a Debug Email</h3>';
 		$instructions .= '<p>You can send a debug email for all submissions that contain logging information which can be useful if you do not have logging enabled. Select "Send a debug email" to enable this feature, and enter a valid email under "Debug email address". This will send an email containing logging information for all forms submitted to You\'ve Got Leads.</p>';
+		$instructions .= '<h3>Global Submission Bypass</h3>';
+		$instructions .= '<p>The Global Submission Bypass is designed to allow your forms to bypass submission to YGL when a form condition is met. If a user selects a value from the field that has been mapped to Form Bypass Keyword (which is limited to the select field type) and that selection\'s value matches the Global Bypass Keyword, then the form will not be submitted to YGL. The form will still submit to the site, and any Wordpress / Gravity Form processes will continue as normal.</p>';
+		$instructions .= '<p>This feature can be useful if you have a condition that a user must meet in order to be submitted to YGL (leads v. employment seekers for example). It is important that the value of the option within the select field (in the Field Properties, select the "Show Values" checkbox) be set to match the Global Bypass Keyword exactly. Please note, the input is "trimmed" before the comparison is run to ensure any leading or trailing spaces are ignored.</p>';
+		$instructions .= '<p>If the checkbox Use Global Submission Bypass is unchecked, no interruption of YGL submission will take place, and any fields mapped to Form Bypass Keyword will do nothing. Fields mapped to Form Bypass Keyword do not send information to YGL on their own. Form fields may be mapped multiple times, so the Form Bypass Keyword should not interfere with YGL submissions unless specifically directed.</p>';
 		$instructions .= '<h2>Form Settings</h2>';
 		$instructions .= '<p>Individual form settings can be found under admin -> Forms -> Forms -> {form name} -> Settings -> YGL GForm.</p>';
 		$instructions .= '<p>Select the "Send this form to You\'ve Got Leads" checkbox to attach the form. You will need to set the Community ID, as the default value is only a placeholder and will not work.</p>';
@@ -385,10 +431,12 @@ class YGL_Gform extends GFAddOn {
 		$instructions .= '<li>Email Address -> email or hidden</li>';
 		$instructions .= '<li>Phone -> phone or hidden</li>';
 		$instructions .= '<li>Community -> select</li>';
+		$instructions .= '<li>Form Bypass Keyword -> select</li>';
 		$instructions .= '</ul>';
 		$instructions .= '<p>So make sure when creating your form that you use the correct form field types for the YGL field mapping.</p>';
 		$instructions .= '<p><strong>Important:</strong> When using the Gravity Forms Address field, be sure to map the correct matching address sub-field. For example, Address Line 2 should be mapped to Address Line 2.</p>';
 		$instructions .= '<p>If you map the Community field, this value will overwrite the required Community ID for the form. This field is provided to allow for multiple communities to be assigned to a single form (and selected by an end user). When mapping this field, please ensure that the value of the field(s) is set to a YGL Community ID. Please note that the Community ID is still a required field in the form\'s settings.</p>';
+		$instructions .= '<p>Form Bypass Keyword is used with the Global Submission Bypass value. Be sure that the value of this field matches the Global Bypass Keyword. See the Global Bypass Submission section (above) for more information.</p>';
 		
 		echo $instructions;	
     }
@@ -471,6 +519,23 @@ class YGL_Gform extends GFAddOn {
 						'default_value' => 'someone@example.com',
 						'tooltip' => esc_html__('Enter a valid email address.', 'ygl_gform'),
 						'style' => 'width: 300px;',
+					),
+					array(
+						'label' => esc_html__('Use Global Submission Bypass', 'ygl__gform'),
+						'type' => 'checkbox',
+						'name' => 'use_submission_bypass',
+						'choices' => array(
+							array(
+								'label' => esc_html__('Bypass submission to YGL when the Bypass Mapped Field\'s value matches the keyword, below ', 'ygl_gform'),
+								'name' => 'use_submission_bypass'
+							),
+						),
+					),
+					array(
+						'label' => esc_html__('Global Bypass Keyword', 'ygl_gform'),
+						'type' => 'text',
+						'name' => 'global_bypass_keyword',
+						'tooltip' => esc_html__('When setting this keyword, make sure all values (this field and any form\'s Form Bypass Keyword) match exactly.', 'ygl_gform'),
 					),
                 )
             )
@@ -680,6 +745,12 @@ class YGL_Gform extends GFAddOn {
 				'required' => false,
 				'field_type' => array('select'),
 				'tooltip' => esc_html__('Overwrites form\'s Community ID. Must be a select field type.', 'ygl_gform'),
+			),
+			array(
+				'name' => 'bypass_field',
+				'label' => esc_html__('Form Bypass Keyword', 'ygl_gform'),
+				'field_type' => array('select'),
+				'tooltip' => esc_html__('Make sure one of the fields\'s values matches the Global Bypass Keyword in the plug-in\'s settings. Must be select field type.', 'ygl_gform'),
 			),
 		);
 	}

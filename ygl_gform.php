@@ -2,7 +2,7 @@
 /*
 Plugin Name: You've Got Leads Gravity Forms
 Description: Send form data to the You've Got Leads CRM using Gravity Form's Add-on Framework
-version: 0.12
+version: 0.13
 Author: Husky Ninja
 Author URI: https://www.husky.ninja
 License: GPLv3 or later
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 */
 
-define( 'YGL_GFORM_VERSION', '0.12' );
+define( 'YGL_GFORM_VERSION', '0.13' );
  
 add_action( 'gform_loaded', array( 'YGL_Gform_Bootstrap', 'load' ), 5 );
  
